@@ -1,0 +1,5 @@
+.env/
+tasks.md
+**/*/__py_cache__
+QuestionGame/node_modules
+QuestionGame/tsconfig.json
