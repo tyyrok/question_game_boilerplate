@@ -1,10 +1,18 @@
 import * as React from 'react';
-import { View, Text } from "react-native";
+import { View, Text, Button } from "react-native";
 
 export function MenuScreen({ navigation }) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Menu will be here</Text>
+        <Button
+          title="Start Game"
+          onPress={() => navigation.navigate('Game')}
+        />
+          <Button
+          title="Start Game"
+          onPress={() => navigation.navigate('Home')}
+        />
       </View>
     );
 }
