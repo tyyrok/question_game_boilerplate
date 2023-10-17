@@ -1,10 +1,11 @@
+import json
 from typing import Any
+from uuid import UUID, uuid4
+from django.contrib.auth import get_user_model
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
-from game.models import Game
-from django.contrib.auth import get_user_model
-import json
-from uuid import UUID
+from game.models import Game as GameModel
+from game.game import Game
 
 User = get_user_model()
 
@@ -30,12 +31,47 @@ class GameConsumer(JsonWebsocketConsumer):
     def connect(self):
         print("Connected!")
         self.accept()
+        self.game = Game()
+        self.game_name = f"game"
+        async_to_sync(self.channel_layer.group_add)(
+            self.game_name,
+            self.channel_name
+        )
+        self.send_json(
+            self.game.get_next_question()
+        )
+        self.send_json(
+            self.game.get_user_result()
+        )
         
     def disconnect(self, code):
         print("Disconnected!")
         return super().disconnect(code)
     
     def receive_json(self, content, **kwargs):
-        print(content['type'])
-        print(content['message'])
+        message_type = content['type']
+        if message_type == 'check_answer':
+            async_to_sync(self.channel_layer.group_send)(
+                self.game_name,
+                self.game.check_answer(content['message']),
+            )           
+        elif message_type == "get_score":
+            async_to_sync(self.channel_layer.group_send)(
+                self.game_name,
+                self.game.get_user_result()
+            )
+            
         return super().receive_json(content, **kwargs)
+    
+    def lost(self, event):
+        self.send_json(event)
+        
+    def win(self, event):
+        self.send_json(event)
+        
+    def next_question(self, event):
+        self.send_json(event)
+        
+    def score(self, event):
+        self.send_json(event)
+        
