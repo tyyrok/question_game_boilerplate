@@ -5,5 +5,5 @@ from authentication.views import CustomObtainAuthTokenView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("auth-token/", CustomObtainAuthTokenView.as_view()),
-    #path("api/", include(".api_router")),
+    path("api/", include("game.urls")),
 ]

@@ -1,6 +1,9 @@
 import random
 from copy import deepcopy
+from django.utils import timezone
+
 from game.utils import ImportQuestions
+from game.models import Game as GameModel
 
 class JsonGameMessanger:
     """Class for making json formated responses returning to consumer"""
@@ -31,13 +34,14 @@ class JsonGameMessanger:
 class Game:
     """Main game logic is here
     """
-    def __init__(self) -> None:
+    def __init__(self, user) -> None:
         self.score = 0
         self.current_question = {}
         self.questions = self.import_questions()
         random.shuffle(self.questions)
         self.question_r_generator = (x for x in self.questions)
         self.json_messenger = JsonGameMessanger()
+        self.user = user
     
     def import_questions(self) -> list[dict]:
         """Load questions from special func/class"""
@@ -49,7 +53,6 @@ class Game:
         """
         try:
             self.current_question = next(self.question_r_generator)
-            print(self.current_question)
             question = deepcopy(self.current_question)
             question.pop("correct_answer")
             return self.json_messenger.json_next_question(question)
@@ -65,10 +68,6 @@ class Game:
     def check_answer(self, answer) -> dict:
         """"Check whether user answer is correct or not"""
         if self.current_question:
-            #print(answer == self.current_question['correct_answer'])
-            #print(answer)
-            #print(self.current_question)
-            #print(self.current_question['correct_answer'])
             if answer == self.current_question['correct_answer']:
                 self.score += 1
                 return self.get_next_question()
@@ -79,5 +78,11 @@ class Game:
     
     def end_game(self, win=False) -> dict:
         """Return message about user win with score"""
+        self.save_game_result(score=self.score, user=self.user)
         return self.json_messenger.json_end_game(message=self.score, win=win)
+    
+    @staticmethod
+    def save_game_result(score, user):
+        """Saving game result to db"""
+        GameModel.objects.create(user=user, score=score, timestamp=timezone.now())
     

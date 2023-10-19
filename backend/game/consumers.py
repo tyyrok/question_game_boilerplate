@@ -31,8 +31,9 @@ class GameConsumer(JsonWebsocketConsumer):
     def connect(self):
         print("Connected!")
         self.accept()
-        self.game = Game()
-        self.game_name = f"game"
+        self.user = self.scope['user']
+        self.game = Game(self.user)
+        self.game_name = f"{self.user.username}-game"
         async_to_sync(self.channel_layer.group_add)(
             self.game_name,
             self.channel_name
