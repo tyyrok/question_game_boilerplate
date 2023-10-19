@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Switch, TouchableOpacity } from "react-native";
 
-export function GameScreen({ navigation }) {
+export function GameScreen({ navigation, user }) {
   const [question, setQuestion] = useState('');
   const [answers, setAnswers] = useState([]);
   const [numberOfQuestion, setNumberOfQuestion] = useState(0);

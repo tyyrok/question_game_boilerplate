@@ -6,11 +6,11 @@ export function MenuScreen({ navigation }) {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Menu will be here</Text>
         <Button
-          title="Start Game"
-          onPress={() => navigation.navigate('Game')}
+          title="Start New Game"
+          onPress={() => navigation.navigate('Home')}
         />
           <Button
-          title="Start Game"
+          title="Return Home"
           onPress={() => navigation.navigate('Home')}
         />
       </View>
