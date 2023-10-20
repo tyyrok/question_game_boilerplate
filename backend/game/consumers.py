@@ -32,6 +32,8 @@ class GameConsumer(JsonWebsocketConsumer):
         print("Connected!")
         self.accept()
         self.user = self.scope['user']
+        if not self.user.is_authenticated:
+            return
         self.game = Game(self.user)
         self.game_name = f"{self.user.username}-game"
         async_to_sync(self.channel_layer.group_add)(

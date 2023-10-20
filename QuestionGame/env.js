@@ -1,1 +1,1 @@
-serverIp = 'http://192.168.0.3/8000'
+export const BACKEND_IP = '192.168.0.3:8000';

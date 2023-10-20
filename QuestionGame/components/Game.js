@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Switch, TouchableOpacity } from "react-native";
+import { View, Text, Button, TouchableOpacity, StyleSheet } from "react-native";
+import { useContext } from 'react';
+import { UserContext } from '../contexts/UserContext';
+import { BACKEND_IP } from '../env';
 
-export function GameScreen({ navigation, user }) {
+export function GameScreen({ navigation }) {
   const [question, setQuestion] = useState('');
   const [answers, setAnswers] = useState([]);
   const [numberOfQuestion, setNumberOfQuestion] = useState(0);
@@ -9,13 +12,15 @@ export function GameScreen({ navigation, user }) {
   const [gameOver, setGameOver] = useState(false);
   const [gameWin, setGameWin] = useState(false);
   const [socket, setSocket] = useState(null);
+  const user = useContext(UserContext);
 
   function handleAnswers(answers) {
     setAnswers([...answers]);
   }
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://192.168.0.6:8000/game/`);
+    token = user.token ? user.token : "";
+    const ws = new WebSocket(`ws://${BACKEND_IP}/game/?token=${token}`);
     setSocket(ws);
     ws.onopen = () => {
       console.log("connected")
@@ -60,9 +65,8 @@ export function GameScreen({ navigation, user }) {
     }
     return () => ws.close();
 
-  }, []);
+  }, [user]);
   onPress = key => event => {
-    console.log(key);
     socket.send(JSON.stringify({
       "type": "check_answer",
       "message": key
@@ -70,55 +74,112 @@ export function GameScreen({ navigation, user }) {
   }
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <View style={{ flex: 0.3 }}>
+    <View style={styles.container}>
+      <View style={styles.header}>
         {!gameOver && (
           <>
-            <Text>Current score {score}</Text>
-            <Text>Question №{numberOfQuestion}</Text>
+            <Text style={styles.textHeader}>Current score {score}</Text>
+            <Text style={styles.textHeader}>Question №{numberOfQuestion}</Text>
           </>
         )}
         {gameOver && !gameWin && (
           <>
-            <Text>Game Over!</Text>
-            <Text>Your score {score}</Text>
-            <Text>Total questions - {numberOfQuestion}</Text>
+            <Text style={styles.textHeaderMain}>Game Over!</Text>
+            <Text style={styles.textHeader}>Your score {score}</Text>
+            <Text style={styles.textHeader}>Total questions - {numberOfQuestion}</Text>
           </>
         )}
         {gameOver && gameWin && (
           <>
-            <Text>You win!</Text>
-            <Text>Your score {score}</Text>
-            <Text>Total questions - {numberOfQuestion}</Text>
+            <Text style={styles.textHeaderMain}>You won!</Text>
+            <Text style={styles.textHeader}>Your score {score}</Text>
+            <Text style={styles.textHeader}>Total questions - {numberOfQuestion}</Text>
           </>
         )}
       </View>
       {!gameOver && (
         <>
-          <View style={{ flex: 0.1 }}>
-            <Text>{question} ?</Text>
+          <View>
+            <Text style={styles.textQuestion}>
+              {question}
+            </Text>
           </View>
-          <View style={{ flex: 0.5 }}>
-            <View style={{ flex: 1 }}>
-              {answers.map((choice) => (
-                <TouchableOpacity style={{ alignItems: 'center', backgroundColor: '#DDDDDD', padding: 10 }}
-                  key={choice}
-                  onPress={this.onPress(choice)}>
-                  <Text>{choice}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+          <View style={{ width: '75%' }}>
+            {answers.map((choice) => (
+              <TouchableOpacity style={styles.textAsnwer}
+                key={choice}
+                onPress={this.onPress(choice)}>
+                <Text>{choice}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </>
       )}
       {gameOver && (
         <>
-          <Button
-            title="Menu"
-            onPress={() => navigation.navigate('Menu')}
-          />
+          <View style={{ width: '35%', flex: 0.1 }}>
+            <View style={{paddingBottom:15}}>
+              <Button
+                title="Results"
+                onPress={() => navigation.navigate('Results')}
+              />
+            </View>
+            <View>
+              <Button
+                title="Play again"
+                onPress={() => navigation.navigate('Home')}
+              />
+            </View>
+          </View>
         </>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  separator: {
+    marginVertical: 8,
+    borderBottomColor: '#fff',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  header: {
+    flex: 0.1,
+    paddingBottom: 60,
+  },
+  textHeaderMain: {
+    fontSize: 22,
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
+  textHeader: {
+    fontSize: 20,
+    textAlign: 'center',
+    textDecorationStyle: "solid"
+  },
+  textQuestion: {
+    fontSize: 18,
+    textAlign: 'center',
+    padding: 10,
+    paddingBottom: 15,
+  },
+  textAsnwer: {
+    flex: 0,
+    alignItems: 'center',
+    fontSize: 16,
+    backgroundColor: 'lightskyblue',
+    borderColor: "black",
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 15,
+    marginBottom: 2,
+    width: '100%',
+    alignItems: 'left',
+  },
+});

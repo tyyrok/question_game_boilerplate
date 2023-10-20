@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 import { useContext } from 'react';
 import { UserContext } from '../contexts/UserContext';
 
 const Separator = () => <View style={styles.separator} />
 
-export function HomeScreen({ navigation}) {
+export function HomeScreen({ navigation }) {
   const [isButtonVisible, setIsButtonVisible] = React.useState(false);
   const [isButtonVisible2, setIsButtonVisible2] = React.useState(false);
   const user = useContext(UserContext);
@@ -15,33 +15,52 @@ export function HomeScreen({ navigation}) {
   useEffect(() => {
     setTimeout(() => {
       setIsButtonVisible(true);
-    }, 1000);
+    }, 1500);
+    setTimeout(() => {
+      setIsButtonVisible2(true);
+    }, 3000);
   }, []);
-
-  console.log("Home Username " + user?.username + " Token " + user.token);
 
   return (
     <View style={styles.container}>
-      {user && 
-      <Text>Hello {user.username}!</Text>
+      {user?.username &&
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          Hello {user.username}!
+        </Text>
       }
-      <Separator />
-      <Text>This is a simple game{!isButtonVisible && ', please wait...'}</Text>
+      {!isButtonVisible && (
+        <>
+          <Separator />
+          <Text style={{ fontSize: 16 }}>
+            This is a simple game, please wait...
+          </Text>
+        </>)
+      }
       <Separator />
       {isButtonVisible &&
-        <Button
-          title="Start Game"
-          onPress={() => navigation.navigate('Game')}
-        />
+        <View style={{ width: '35%'}}>
+          <Button
+            title="Start Game"
+            onPress={() => navigation.navigate('Game')}
+          />
+        </View>
       }
       <Separator />
-      {isButtonVisible2 &&
-        <Button
-          title="Menu"
-          onPress={() => navigation.navigate('Menu')}
-          style={{ width: 20 }}
-        />
+      {isButtonVisible2 && (
+        <View style={{ width: '35%' }}>
+          <Button
+            title="Results"
+            onPress={() => navigation.navigate('Results')}
+          />
+        </View>
+      )
       }
+      { !isButtonVisible2 && (
+        <>
+        <Separator />
+        <Text></Text>
+        </>
+      )}
       <StatusBar style="auto" />
     </View>
   )
