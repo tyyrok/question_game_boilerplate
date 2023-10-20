@@ -26,11 +26,15 @@ export default function App() {
           username: username,
         }),
       });
-      const json = await response.json();
-      setUser(json);
-      await storeUser(json);
+      if (response.status == '200'){
+        const json = await response.json();
+        setUser(json);
+        await storeUser(json);
 
-      return json
+        return json
+      } else if (response.status == '404') {
+        await login('new');
+      }
     } catch (e) {
       console.error(e);
     }
@@ -38,7 +42,6 @@ export default function App() {
   useEffect(() => {
     (async () => {
       const localUser = await getUser();
-      console.log(localUser);
       if (localUser?.username && !user.username) {
         console.log("local")
         login(localUser.username);
