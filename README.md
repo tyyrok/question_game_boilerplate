@@ -34,6 +34,6 @@ For development purposes I use Expo Go app, that allows coding without installin
 
 ### Screenshot
 
-![Home menu](home.jpg)
-![Game](game.jpg)
-![Results](results.jpg)
+<img src="home.jpg" alt="Home" width="250"/>
+<img src="game.jpg" alt="Game" width="250"/>
+<img src="results.jpg" alt="Results" width="250"/>
