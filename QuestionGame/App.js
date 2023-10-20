@@ -35,19 +35,19 @@ export default function App() {
       console.error(e);
     }
   }
-
   useEffect(() => {
     (async () => {
       const localUser = await getUser();
+      console.log(localUser);
       if (localUser?.username && !user.username) {
-        setUser(localUser);
+        console.log("local")
+        login(localUser.username);
       }
       if (!localUser?.username && !user.username) {
+        console.log("new")
         login('new');
       }
     })();
-
-
   }, []);
 
   return (

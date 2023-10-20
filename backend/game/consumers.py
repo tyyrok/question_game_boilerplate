@@ -1,10 +1,9 @@
 import json
 from typing import Any
-from uuid import UUID, uuid4
+from uuid import UUID
 from django.contrib.auth import get_user_model
 from channels.generic.websocket import JsonWebsocketConsumer
 from asgiref.sync import async_to_sync
-from game.models import Game as GameModel
 from game.game import Game
 
 User = get_user_model()
@@ -32,7 +31,7 @@ class GameConsumer(JsonWebsocketConsumer):
         print("Connected!")
         self.accept()
         self.user = self.scope['user']
-        if not self.user.is_authenticated:
+        if self.user.is_anonymous:
             return
         self.game = Game(self.user)
         self.game_name = f"{self.user.username}-game"

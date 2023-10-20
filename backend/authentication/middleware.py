@@ -81,7 +81,10 @@ class TokenAuthMiddleware:
         # checking if it is a valid user ID, or if scope["user"] is already
         # populated).
         query_params = parse_qs(scope["query_string"].decode())
-        token = query_params["token"][0]
+        try:
+            token = query_params["token"][0]
+        except:
+            raise PermissionError
         scope["token"] = token
         scope["user"] = await get_user(scope)
         return await self.app(scope, receive, send)

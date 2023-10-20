@@ -12,9 +12,10 @@ So the main plot of game is very simple - answer all questions and win the game!
 ### Setting up for development with Expo Go
 For development purposes I use Expo Go app, that allows coding without installing IOS or Android native's SDK. Only one thing you need to do is install Expo Go (https://expo.dev/client) on your smartphone.
 
+- Create python virtual environment and switch to it
 - Install requirements - `python pip install -r requirements.txt`
-- Build Redis and Postgres docker images - `docker-compose -f docker-compose-dev.yml build`
-- Migrate Django db - `cd backend && python manage.py makemigrations && pythone manage.py migrate`
+- Build Redis and Postgres docker images - `docker-compose -f docker-compose-dev.yml up`
+- Migrate Django db - `cd backend && python manage.py migrate`
 - Add React Native components: `cd QuestionGame && npm install`
 
 ### Basic Commands
