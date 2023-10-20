@@ -3,13 +3,13 @@ class ImportQuestions:
     def __init__(self) -> None:
         self.__arr = []
     
-    def import_csv(self, filename='game/questions.csv') -> list[dict]:
-        """Import from CSV"""
+    def import_csv(self, filename='game/questions.csv', delimeter=',') -> list[dict]:
+        """Import from CSV, default delimeter is ','"""
         self.__arr = []
         with open(filename, 'r') as f:
             for line in f:
                 elem = {}
-                line_split = line.split(',')
+                line_split = line.split(delimeter)
                 if 'LastCorrectAnswer\n' in line_split:
                     continue
                 

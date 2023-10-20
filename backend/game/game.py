@@ -49,7 +49,7 @@ class Game:
         return importer.import_csv()
     
     def get_next_question(self) -> dict:
-        """Return next question to user
+        """Return next question to user or end game method
         """
         try:
             self.current_question = next(self.question_r_generator)

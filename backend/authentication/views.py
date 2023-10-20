@@ -11,7 +11,9 @@ User = get_user_model()
 
 class CustomObtainAuthTokenView(ObtainAuthToken):
     """ Simple class for creating new user when username='new' received and
-        returning token for this user
+        returning token for this user. 
+        Be carefull: User authentication doesn't require password, so
+        this simple authentication is used only for storing results of game.
     """
     def post(self, request, *args, **kwargs):
         serializer = SimpleUsernameSerializer(data=request.data)
